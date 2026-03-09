@@ -1552,10 +1552,64 @@
         font-size: 3.5rem;
       }
     }
+
+    /* UPDATE BANNER */
+    .update-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #f0f0f0;
+      padding: 12px 24px;
+      border-radius: 980px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 10px 10px 20px #d1d1d1,
+        -10px -10px 20px #ffffff;
+      z-index: 10000;
+      transition: transform 0.6s var(--transition);
+      border: 1px solid rgba(0, 113, 227, 0.1);
+    }
+
+    .update-banner.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .update-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--dark-gray);
+    }
+
+    .update-text b {
+      color: var(--accent);
+    }
+
+    .update-close {
+      background: none;
+      border: none;
+      color: var(--mid-gray);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .update-close:hover {
+      color: var(--dark-gray);
+    }
   </style>
 </head>
 
 <body>
+
+  <div id="updateBanner" class="update-banner">
+    <div class="update-text">🆕 Lumina <span id="updateVersion">v1.1</span> is available — <b>git pull</b> to update
+    </div>
+    <button class="update-close" onclick="dismissUpdate()">×</button>
+  </div>
 
   <nav>
     <a href="#" class="nav-logo">Lumina</a>
@@ -2799,6 +2853,27 @@
       }
       return res;
     }
+
+    // --- UPDATE CHECKER ---
+    async function checkUpdate() {
+      try {
+        const res = await nativeFetch("/update_status");
+        const data = await res.json();
+        if (data.update_available) {
+          document.getElementById('updateVersion').textContent = `v${data.latest}`;
+          document.getElementById('updateBanner').classList.add('visible');
+        }
+      } catch (err) {
+        console.debug("Update check failed (silent)");
+      }
+    }
+
+    function dismissUpdate() {
+      document.getElementById('updateBanner').classList.remove('visible');
+    }
+
+    // Run check on load
+    checkUpdate();
 
   </script>
   <!-- LLM SETUP MODAL -->

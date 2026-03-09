@@ -46,6 +46,7 @@ from models import (
 DEFAULT_OUTPUT_DIR = Path("outputs")
 DEFAULT_SAMPLE_RATE = 24000
 MAX_TEXT_LENGTH = 5000
+CURRENT_VERSION = "1.0.0"
 
 # Global device and pipelines
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -1148,6 +1149,28 @@ async def generate_podcast_logic(req: PodcastRequest):
         logger.error("❌ Podcast error: %s", str(e))
         yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
+async def check_for_updates():
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                "https://api.github.com/repos/PierrunoYT/Kokoro-TTS-Local/releases/latest",
+                timeout=3.0,
+                headers={"Accept": "application/vnd.github.v3+json"}
+            )
+            if r.status_code == 200:
+                data = r.json()
+                latest = data["tag_name"].lstrip("v")
+                if latest != CURRENT_VERSION:
+                    logger.info("🆕 Update available: v%s → v%s", CURRENT_VERSION, latest)
+                    return latest
+    except Exception as e:
+        logger.debug("Update check failed: %s", e)
+    return None
+
+@app.get("/update_status")
+async def get_update_status():
+    latest = await check_for_updates()
+    return {"current": CURRENT_VERSION, "latest": latest, "update_available": latest is not None}
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_index():
@@ -1159,4 +1182,8 @@ if __name__ == "__main__":
     # Pre-build model for default English
     logger.info("Pre-building default English pipeline...")
     get_pipeline("af_bella")
+    
+    # Run update check on startup
+    asyncio.run(check_for_updates())
+    
     uvicorn.run(app, host="0.0.0.0", port=8000)
