@@ -1,0 +1,2835 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina — Think Different</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #f0f0f0;
+      --light-gray: #e8e8ed;
+      --mid-gray: #86868b;
+      --dark-gray: #1d1d1f;
+      --black: #000000;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --radius: 18px;
+      --transition: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #ffffff;
+      color: var(--dark-gray);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--dark-gray);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+      color: var(--dark-gray);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+    }
+
+    .nav-cta {
+      font-size: 0.8rem;
+      padding: 7px 18px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 980px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      transition: background 0.2s var(--transition), transform 0.15s;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+      text-align: center;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 900px;
+      height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(0, 113, 227, 0.07) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.1s var(--transition) forwards;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--dark-gray);
+      max-width: 820px;
+      margin: 0 auto 28px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.2s var(--transition) forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--mid-gray);
+      max-width: 480px;
+      line-height: 1.65;
+      font-weight: 300;
+      margin: 0 auto 44px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s var(--transition) forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s var(--transition) forwards;
+    }
+
+    .btn-primary {
+      padding: 14px 32px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 980px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+      box-shadow: 0 8px 32px rgba(0, 113, 227, 0.25);
+    }
+
+    .btn-secondary {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid rgba(0, 113, 227, 0.3);
+      border-radius: 980px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: rgba(0, 113, 227, 0.04);
+      transform: scale(1.02);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      animation: fadeIn 1s 1.2s forwards;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, var(--mid-gray));
+      animation: scrollBounce 2s infinite;
+    }
+
+    .scroll-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid-gray);
+    }
+
+    .stats-bar {
+      padding: 60px 48px;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      flex-wrap: wrap;
+      box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .stat {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s var(--transition), transform 0.7s var(--transition);
+    }
+
+    .stat.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 400;
+      color: var(--dark-gray);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--mid-gray);
+      letter-spacing: 0.05em;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    /* SECTION SHARED */
+    section {
+      padding: 120px 24px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--dark-gray);
+      max-width: 560px;
+    }
+
+    .section-body {
+      font-size: 1.05rem;
+      color: var(--mid-gray);
+      line-height: 1.7;
+      max-width: 420px;
+      font-weight: 300;
+      margin-top: 20px;
+    }
+
+    /* STUDIO SECTION (TTS INTERFACE) */
+    .studio {
+      background: var(--white);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .studio-container {
+      background: #f0f0f0;
+      border-radius: 32px;
+      padding: 60px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 60px;
+      box-shadow: 8px 8px 16px #d1d1d1,
+        -8px -8px 16px #ffffff;
+      border: none;
+    }
+
+    .studio-main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .studio-field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .studio-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--mid-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .studio-textarea {
+      width: 100%;
+      min-height: 240px;
+      padding: 24px;
+      border-radius: 20px;
+      border: none;
+      background: #f0f0f0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--dark-gray);
+      resize: none;
+      transition: box-shadow 0.3s;
+      outline: none;
+      box-shadow: inset 5px 5px 10px #d1d1d1,
+        inset -5px -5px 10px #ffffff;
+    }
+
+    .studio-textarea:focus {
+      box-shadow: inset 7px 7px 14px #d1d1d1,
+        inset -7px -7px 14px #ffffff;
+    }
+
+    .studio-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding-left: 40px;
+      border-left: 1px solid var(--light-gray);
+    }
+
+    .sidebar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-select select {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      background: #f0f0f0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--dark-gray);
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      box-shadow: inset 5px 5px 10px #d1d1d1,
+        inset -5px -5px 10px #ffffff;
+    }
+
+    .custom-select select:focus {
+      box-shadow: inset 7px 7px 14px #d1d1d1,
+        inset -7px -7px 14px #ffffff;
+    }
+
+    .custom-select::after {
+      content: '↓';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 1rem;
+      color: var(--mid-gray);
+    }
+
+    .range-slider {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .range-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .range-value {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: var(--light-gray);
+      border-radius: 2px;
+      appearance: none;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .radio-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border-radius: 12px;
+      border: none;
+      background: #f0f0f0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 4px 4px 8px #d1d1d1,
+        -4px -4px 8px #ffffff;
+    }
+
+    .radio-btn.active {
+      background: #f0f0f0;
+      color: var(--accent);
+      box-shadow: inset 3px 3px 6px #d1d1d1,
+        inset -3px -3px 6px #ffffff;
+    }
+
+    .studio-actions {
+      margin-top: auto;
+    }
+
+    .btn-generate,
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 980px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 6px 6px 12px #d1d1d1,
+        -6px -6px 12px #ffffff;
+    }
+
+    .btn-generate:hover,
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+      box-shadow: 4px 4px 10px rgba(0, 113, 227, 0.2);
+    }
+
+    .btn-generate:active,
+    .btn-primary:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .btn-generate:disabled {
+      background: #f0f0f0;
+      color: var(--mid-gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      opacity: 0.6;
+    }
+
+    .player-box {
+      margin-top: 32px;
+      padding: 32px;
+      background: white;
+      border-radius: 24px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeUp 0.5s var(--transition) forwards;
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .download-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    audio {
+      width: 100%;
+      height: 44px;
+      outline: none;
+    }
+
+    /* FEATURES GRID */
+    .features {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .features-header .section-title,
+    .features-header .section-body {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .features-header .section-body {
+      margin-top: 16px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--light-gray);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--white);
+      padding: 48px 40px;
+      transition: background 0.3s;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s var(--transition), transform 0.6s var(--transition), background 0.3s;
+    }
+
+    .feature-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-card:hover {
+      background: var(--off-white);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 113, 227, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      font-size: 1.2rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--dark-gray);
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--mid-gray);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* SPLIT SECTION */
+    .split-section {
+      background: var(--off-white);
+    }
+
+    .split-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .split-visual {
+      border-radius: 24px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 40%, #c2d7fb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .split-visual-inner {
+      width: 70%;
+      height: 70%;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .mock-bar {
+      height: 32px;
+      background: var(--off-white);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .mock-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .mock-dot:nth-child(1) {
+      background: #ff5f57;
+    }
+
+    .mock-dot:nth-child(2) {
+      background: #febc2e;
+    }
+
+    .mock-dot:nth-child(3) {
+      background: #28c840;
+    }
+
+    .mock-content {
+      flex: 1;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mock-line {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--light-gray);
+      animation: shimmer 2s infinite;
+    }
+
+    .mock-line.short {
+      width: 55%;
+    }
+
+    .mock-line.accent {
+      background: rgba(0, 113, 227, 0.15);
+      width: 75%;
+    }
+
+    .split-content {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.7s var(--transition), transform 0.7s var(--transition);
+    }
+
+    .split-content.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .link-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      margin-top: 28px;
+      transition: gap 0.2s;
+    }
+
+    .link-arrow:hover {
+      gap: 10px;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials {
+      background: var(--dark-gray);
+      color: white;
+    }
+
+    .testimonials-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .testimonials .section-label {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .testimonials .section-title {
+      color: white;
+      margin: 0 auto 64px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: left;
+      transition: background 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--transition), transform 0.6s var(--transition), background 0.3s;
+    }
+
+    .testimonial-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .testimonial-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-4px);
+    }
+
+    .testimonial-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: white;
+      font-weight: 500;
+    }
+
+    .author-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: white;
+    }
+
+    .author-title {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      display: block;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 80px 48px;
+      background: var(--white);
+      border-top: 1px solid var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--dark-gray);
+      text-decoration: none;
+    }
+
+    .copyright {
+      font-size: 0.75rem;
+      color: var(--mid-gray);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scrollBounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-10px);
+      }
+
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.5;
+      }
+    }
+
+    /* ORB OVERLAY / SPLASH */
+    .orb-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgb(0, 0, 0);
+      z-index: 10000;
+      display: flex;
+      /* Start visible as splash */
+      opacity: 1;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Radial glow behind the canvas */
+    .orb-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(64, 128, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .orb-container {
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #orbCanvas {
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      filter: blur(2px);
+      /* Slight blur for even softer edges */
+    }
+
+    .orb-label-container {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    #splashLabel {
+      display: block;
+    }
+
+    #generatingLabel {
+      display: none;
+    }
+
+    .splash-title {
+      font-family: 'SF Pro Display', sans-serif;
+      font-weight: 200;
+      letter-spacing: 0.25em;
+      color: white;
+      text-transform: uppercase;
+      font-size: 1.4rem;
+      opacity: 0.9;
+    }
+
+    .splash-sub {
+      font-family: 'SF Pro Display', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--mid-gray);
+      font-size: 0.8rem;
+    }
+
+    .orb-label {
+      font-family: 'SF Pro Display', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      opacity: 0.6;
+      animation: pulseLabel 3s infinite ease-in-out;
+    }
+
+    @keyframes pulseLabel {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    /* PODCAST TAB STYLES */
+    .podcast-container {
+      display: flex;
+      gap: 2%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 60px 48px;
+    }
+
+    .podcast-main {
+      flex: 0 0 60%;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .podcast-sidebar {
+      flex: 0 0 38%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-left: 20px;
+      border-left: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .hosts-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .host-settings-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .host-card,
+    .sidebar-section,
+    .audio-player-container,
+    .panel,
+    .player-box,
+    .studio-sidebar,
+    .podcast-sidebar {
+      background: #f0f0f0;
+      padding: 24px;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 8px 8px 16px #d1d1d1,
+        -8px -8px 16px #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .host-card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--mid-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .script-editor,
+    .script-editor-container {
+      width: 100%;
+      height: 400px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 20px;
+      border-radius: 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: vertical;
+      border: none;
+      outline: none;
+      box-shadow: inset 8px 8px 16px #0a0a0a,
+        inset -8px -8px 16px #2a2a2a;
+    }
+
+    .generate-script-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 980px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 6px 6px 12px #d1d1d1, -6px -6px 12px #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .generate-script-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+      box-shadow: 4px 4px 10px rgba(0, 113, 227, 0.2);
+    }
+
+    .generate-script-btn:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .export-format-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .export-format-select-wrapper::after {
+      content: '\f078';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 0.8rem;
+      color: #86868b;
+    }
+
+    .export-format-select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 10px;
+      box-shadow: inset 5px 5px 10px #d1d1d1,
+        inset -5px -5px 10px #ffffff;
+      font-size: 0.9rem;
+      color: #1d1d1f;
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .llm-badge.ollama {
+      background: #e6f7ed;
+      color: #15803d;
+      border: 1px solid #bcf0da;
+    }
+
+    .llm-badge.groq {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+    }
+
+    .llm-badge.none {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fef3c7;
+    }
+
+    .llm-badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .setup-modal {
+      background: #121212;
+      border: 1px solid #333;
+      border-radius: 24px;
+      width: 500px;
+      max-width: 90vw;
+      padding: 40px;
+      color: white;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .setup-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .setup-sub {
+      color: #888;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .option-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .option-card:hover {
+      border-color: #555;
+    }
+
+    .option-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .option-steps {
+      font-size: 0.85rem;
+      color: #aaa;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .option-steps code {
+      background: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .option-footer {
+      display: flex;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .footer-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-item.check {
+      color: #4ade80;
+    }
+
+    .setup-input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .setup-input {
+      flex: 1;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: white;
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+
+    .setup-btn-save {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .setup-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .btn-retry {
+      background: white;
+      color: black;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: #666;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .podcast-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .podcast-row input,
+    .podcast-input-group input,
+    .studio-input {
+      background: #f0f0f0;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      box-shadow: inset 5px 5px 10px #d1d1d1,
+        inset -5px -5px 10px #ffffff;
+      outline: none;
+      width: 100%;
+      color: var(--dark-gray);
+    }
+
+    .podcast-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 80px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .tab-link {
+      padding: 12px 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .tab-link.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .speaker-label {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* Progress & Status */
+    .podcast-status {
+      padding: 15px;
+      background: var(--off-white);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: var(--mid-gray);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .podcast-status i {
+      color: var(--accent);
+    }
+
+    .script-line-h2 {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    /* MAINTENANCE STATE */
+    .maintenance-box {
+      width: 100%;
+      max-width: 60%;
+      margin: 40px auto;
+      padding: 80px 60px;
+      background: #f0f0f0;
+      border-radius: 40px;
+      text-align: center;
+      box-shadow: 20px 20px 60px #d1d1d1,
+        -20px -20px 60px #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: fadeUp 0.8s var(--transition) forwards;
+    }
+
+    .maintenance-icon {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.05));
+    }
+
+    .maintenance-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--dark-gray);
+      letter-spacing: -0.04em;
+    }
+
+    .maintenance-text {
+      color: var(--mid-gray);
+      line-height: 1.6;
+      font-size: 1.15rem;
+      max-width: 500px;
+      margin-bottom: 10px;
+    }
+
+    .maintenance-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(0, 113, 227, 0.1);
+      color: var(--accent);
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .podcast-container {
+        flex-direction: column;
+        padding: 40px 24px;
+      }
+
+      .podcast-main,
+      .podcast-sidebar {
+        flex: 0 0 100%;
+        padding-left: 0;
+        border-left: none;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .nav-links {
+        display: none;
+      }
+
+      .studio-container {
+        grid-template-columns: 1fr;
+        padding: 40px 24px;
+      }
+
+      .studio-sidebar {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--light-gray);
+        padding-top: 40px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .split-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .split-visual {
+        order: -1;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">Lumina</a>
+    <ul class="nav-links">
+      <li><a href="#studio" onclick="switchTab('studio')">Studio</a></li>
+      <li><a href="#podcast" onclick="switchTab('podcast')">Podcast</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#testimonials">Voices</a></li>
+    </ul>
+    <a href="#studio" class="nav-cta">Get Started</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-eyebrow">The Future of Voice</div>
+    <h1 class="hero-title">Think <em>Different</em>. Speak Clearly.</h1>
+    <p class="hero-sub">The world's most advanced local TTS engine. Premium quality, zero latency, complete privacy.</p>
+    <div class="hero-actions">
+      <a href="#studio" class="btn-primary">Try Lumina Studio</a>
+      <a href="#features" class="btn-secondary">Explore Features</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Scroll to Explore</span>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-number">54+</div>
+      <div class="stat-label">Premium Voices</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">8</div>
+      <div class="stat-label">Global Languages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">24</div>
+      <div class="stat-label">kHz Sample Rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">0ms</div>
+      <div class="stat-label">Cloud Latency</div>
+    </div>
+  </div>
+
+  <section id="studio" class="studio">
+    <div class="features-header">
+      <div class="section-label">Lumina Studio</div>
+      <h2 class="section-title">Bring your words to life.</h2>
+      <p class="section-body">Experience the purity of high-fidelity synthetic voice.</p>
+    </div>
+
+    <div class="studio-container">
+      <div class="studio-main">
+        <div class="studio-field">
+          <label class="studio-label">Input Text</label>
+          <textarea id="inputText" class="studio-textarea" placeholder="Type or paste your text here..."></textarea>
+        </div>
+
+        <div id="playerBox" class="player-box">
+          <div class="player-header">
+            <span class="studio-label">Preview Audio</span>
+            <a id="downloadLink" href="#" download class="download-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download
+            </a>
+          </div>
+          <audio id="audioPlayer" controls></audio>
+        </div>
+      </div>
+
+      <div class="studio-sidebar">
+        <div class="sidebar-group">
+          <label class="studio-label">Voice Model</label>
+          <div class="custom-select">
+            <select id="voiceSelect">
+              <option value="af_bella">af_bella (Warm & Friendly)</option>
+              <option value="af_heart">af_heart (Premium Quality)</option>
+              <option value="bf_emma">bf_emma (British Professional)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sidebar-group">
+          <label class="studio-label">Speech Speed</label>
+          <div class="range-slider">
+            <div class="range-header">
+              <span class="range-value" id="speedValue">1.0x</span>
+            </div>
+            <input type="range" id="speedSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+          </div>
+        </div>
+
+        <div class="sidebar-group">
+          <label class="studio-label">Export Format</label>
+          <div class="radio-group" id="formatGroup">
+            <div class="radio-btn active" data-value="wav">WAV</div>
+            <div class="radio-btn" data-value="mp3">MP3</div>
+            <div class="radio-btn" data-value="aac">AAC</div>
+          </div>
+        </div>
+
+        <div class="sidebar-group">
+          <label class="studio-label">System Optimizations</label>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; color: var(--mid-gray);">Low RAM Mode</span>
+            <input type="checkbox" id="lowRamToggle" style="width: 20px; height: 20px; cursor: pointer;">
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; color: var(--mid-gray);">Emotion-Aware Narration</span>
+            <input type="checkbox" id="emotionToggle" checked style="width: 20px; height: 20px; cursor: pointer;">
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <span style="font-size: 0.9rem; color: var(--mid-gray);">Smart Pronunciation</span>
+            <input type="checkbox" id="smartPronunciationToggle" checked
+              style="width: 20px; height: 20px; cursor: pointer;">
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <label class="studio-label" style="margin-bottom: 0;">Acoustic Humanizer</label>
+            <input type="checkbox" id="humanizeToggle" style="width: 20px; height: 20px; cursor: pointer;">
+          </div>
+
+          <!-- RVC Section -->
+          <div style="border-top: 1px solid var(--light-gray); padding-top: 25px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h3 class="studio-label"
+                style="margin-bottom: 0; font-size: 0.85rem; color: var(--dark-gray); font-weight: 600;">Voice
+                Conversion (RVC)</h3>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div id="modeIndicator"
+                  style="font-size: 0.65rem; background: var(--off-white); padding: 2px 8px; border-radius: 20px; border: 1px solid var(--light-gray); display: none; font-weight: 600;">
+                </div>
+                <input type="checkbox" id="rvcEnabled" style="width: 20px; height: 20px; cursor: pointer;">
+              </div>
+            </div>
+
+            <div id="rvcControls" style="display: none; flex-direction: column; gap: 15px;">
+              <div>
+                <label class="studio-label" style="font-size: 0.75rem;">Model (.pth)</label>
+                <div style="display: flex; gap: 8px;">
+                  <select id="rvcModelSelect"
+                    style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--light-gray); font-size: 0.85rem; background: #fff;">
+                    <option value="">Select a model...</option>
+                  </select>
+                  <label for="rvcModelUpload"
+                    style="padding: 10px; background: var(--off-white); border: 1px solid var(--light-gray); border-radius: 10px; cursor: pointer; display: flex; align-items: center;">
+                    📁
+                    <input type="file" id="rvcModelUpload" accept=".pth" style="display: none;">
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="studio-label" style="font-size: 0.75rem;">Index (.index) <span
+                    style="font-weight: normal; opacity: 0.6;">(Optional)</span></label>
+                <div style="display: flex; gap: 8px;">
+                  <select id="rvcIndexSelect"
+                    style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--light-gray); font-size: 0.85rem; background: #fff;">
+                    <option value="">Select an index...</option>
+                  </select>
+                  <label for="rvcIndexUpload"
+                    style="padding: 10px; background: var(--off-white); border: 1px solid var(--light-gray); border-radius: 10px; cursor: pointer; display: flex; align-items: center;">
+                    📁
+                    <input type="file" id="rvcIndexUpload" accept=".index" style="display: none;">
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <label class="studio-label" style="font-size: 0.75rem; margin-bottom: 0;">Pitch Shift</label>
+                  <span id="rvcPitchValue" style="font-size: 0.8rem; font-weight: 600; color: var(--accent);">0</span>
+                </div>
+                <input type="range" id="rvcPitchSlider" min="-12" max="12" value="0" step="1" style="width: 100%;">
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <label class="studio-label" style="font-size: 0.75rem; margin-bottom: 0;">Index Rate</label>
+                  <span id="rvcIndexValue"
+                    style="font-size: 0.8rem; font-weight: 600; color: var(--accent);">0.75</span>
+                </div>
+                <input type="range" id="rvcIndexSlider" min="0" max="1" value="0.75" step="0.05" style="width: 100%;">
+              </div>
+
+              <div style="font-size: 0.65rem; color: var(--mid-gray); line-height: 1.4; font-style: italic;">
+                💡 Download .pth voice models from weights.gg or Hugging Face. Search "RVC voice model" + the voice type
+                you want.
+              </div>
+            </div>
+          </div>
+
+          <div id="tempPathContainer" style="display: none; margin-top: 10px;">
+            <label class="studio-label" style="font-size: 0.7rem;">Temp Path</label>
+            <input type="text" id="tempPathInput" value="./kokoro_temp/"
+              style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--light-gray); font-size: 0.8rem;">
+          </div>
+        </div>
+
+        <div class="studio-actions">
+          <div id="progressStatus"
+            style="font-size: 0.8rem; color: var(--accent); margin-bottom: 12px; min-height: 1.2em; display: none;">
+          </div>
+          <button id="generateBtn" class="btn-generate">
+            <span id="btnText">Generate Speech</span>
+            <div id="loadingDots" style="display: none;">...</div>
+          </button>
+
+          <div class="sidebar-group" style="margin-top: 20px; padding: 0;">
+            <div id="consoleHeader"
+              style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0; border-top: 1px solid var(--light-gray);">
+              <label class="studio-label"
+                style="margin-bottom: 0; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 0.05em;">
+                📟 Live Console <span id="consoleToggleArrow" style="font-size: 0.6rem; opacity: 0.5;">▼</span>
+              </label>
+              <button id="clearConsoleBtn"
+                style="background: none; border: none; font-size: 0.65rem; color: var(--accent); cursor: pointer; padding: 2px 8px; border-radius: 4px; display: none;">Clear</button>
+            </div>
+            <div id="consolePanel"
+              style="display: none; background: #0a0a0a; border-radius: 12px; padding: 15px; margin-top: 5px; font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.7rem; height: 180px; overflow-y: auto; line-height: 1.5; border: 1px solid #1a1a1a; box-shadow: inset 0 4px 15px rgba(0,0,0,0.4);">
+              <div id="consoleOutput" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="color: #666; font-style: italic;"># Console initialized. Waiting for logs...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PODCAST SECTION -->
+  <section id="podcast" class="studio hidden">
+    <div class="features-header">
+      <div class="section-label">Podcast Generator</div>
+      <h2 class="section-title">Two hosts. One conversation.</h2>
+      <p class="section-body">Convert any text into a natural deep-dive podcast between two distinct voices.</p>
+    </div>
+
+    <div class="podcast-container">
+      <div class="maintenance-box">
+        <div class="maintenance-icon">🎙️</div>
+        <div class="maintenance-badge">Under Optimization</div>
+        <h2 class="maintenance-title">Podcast Studio 2.0</h2>
+        <p class="maintenance-text">
+          We're currently fine-tuning our neural backend to deliver even more natural, multi-host conversations. The
+          next generation of local podcasting is almost ready for you.
+        </p>
+        <div style="margin-top: 20px;">
+          <a href="#studio" onclick="switchTab('studio')" class="btn-primary"
+            style="width: auto; padding: 15px 40px; text-decoration: none;">
+            Return to Studio
+          </a>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section class="split-section">
+    <div class="split-inner">
+      <div class="split-visual">
+        <div class="split-visual-inner">
+          <div class="mock-bar">
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+          </div>
+          <div class="mock-content">
+            <div class="mock-line"></div>
+            <div class="mock-line short"></div>
+            <div class="mock-line accent"></div>
+            <div class="mock-line"></div>
+            <div class="mock-line short"></div>
+          </div>
+        </div>
+      </div>
+      <div class="split-content">
+        <div class="section-label">Intuitive Control</div>
+        <h2 class="section-title">Designed for creators.</h2>
+        <p class="section-body">Control every aspect of your synthesis with simple yet powerful UI. Adjust speed, select
+          voices, and export in high-fidelity formats with one click.</p>
+        <a href="#studio" class="link-arrow">Back to Studio →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+
+    <div class="features-header">
+      <div class="section-label">Superior Tech</div>
+      <h2 class="section-title">Engineered for Perfection.</h2>
+      <p class="section-body">Lumina isn't just a TTS engine; it's a breakthrough in neural audio synthesis.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💎</div>
+        <h3 class="feature-title">Crystal Clarity</h3>
+        <p class="feature-desc">82M parameter neural network model optimized for 24kHz studio-quality output.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏃</div>
+        <h3 class="feature-title">Instant Response</h3>
+        <p class="feature-desc">Zero cloud latency. Your audio is generated locally on your hardware instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">Total Privacy</h3>
+        <p class="feature-desc">Your data never leaves your machine. 100% offline-ready and secure.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3 class="feature-title">Multilingual</h3>
+        <p class="feature-desc">Fluent in 8 languages with culturally accurate accents and phonemes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3 class="feature-title">Emotional Depth</h3>
+        <p class="feature-desc">Voices that convey nuance, warmth, and natural human prosody.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Efficient</h3>
+        <p class="feature-desc">Runs on CPU or GPU. Lightweight architecture designed for modern devices.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="testimonials">
+    <div class="testimonials-inner">
+      <div class="section-label">Voice Gallery</div>
+      <h2 class="section-title">The most diverse voice collection.</h2>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"Hello, I'm Bella. I provide a warm and friendly presence for your projects."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">B</div>
+            <div>
+              <span class="author-name">af_bella</span>
+              <span class="author-title">American Female • Grade A-</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"My voice is engineered for premium clarity and authoritative narration."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">H</div>
+            <div>
+              <span class="author-name">af_heart</span>
+              <span class="author-title">American Female • Grade A</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"Refined, professional, and distinctly British for sophisticated content."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">E</div>
+            <div>
+              <span class="author-name">bf_emma</span>
+              <span class="author-title">British Female • Grade B-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="sidebar-group"
+          style="border-top: 1px solid var(--light-gray); padding-top: 25px; margin-top: 20px;">
+          <h3 class="studio-label"
+            style="margin-bottom: 15px; font-size: 0.85rem; color: var(--dark-gray); font-weight: 600;">System Settings
+          </h3>
+          <div>
+            <label class="studio-label" style="font-size: 0.75rem;">Groq API Key</label>
+            <input type="password" id="groqApiKey" placeholder="gsk_..."
+              style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--light-gray); font-size: 0.85rem; background: var(--off-white); margin-top: 5px;">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div id="orbOverlay" class="orb-overlay">
+    <div class="orb-glow"></div>
+    <div class="orb-container">
+      <canvas id="orbCanvas"></canvas>
+      <div class="orb-label-container">
+        <div id="splashLabel">
+          <div class="splash-title">Kokoro Studio</div>
+          <div class="splash-sub">Local TTS — Loading models...</div>
+        </div>
+        <div id="generatingLabel" class="orb-label">Generating...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="#" class="footer-logo">Lumina</a>
+    <div class="copyright">© 2024 Lumina Labs. Built on Kokoro-82M.</div>
+  </footer>
+
+  <script>
+    const nativeFetch = window.fetch.bind(window);
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.stat, .feature-card, .testimonial-card, .split-content').forEach(el => {
+      observer.observe(el);
+    });
+
+    // --- TAB SYSTEM ---
+    function switchTab(tabId) {
+      const studio = document.getElementById('studio');
+      const podcast = document.getElementById('podcast');
+      const studioLink = document.querySelector('a[href="#studio"]');
+      const podcastLink = document.querySelector('a[href="#podcast"]');
+
+      if (tabId === 'studio') {
+        studio.classList.remove('hidden');
+        podcast.classList.add('hidden');
+        studioLink.classList.add('active');
+        podcastLink.classList.remove('active');
+      } else {
+        studio.classList.add('hidden');
+        podcast.classList.remove('hidden');
+        studioLink.classList.remove('active');
+        podcastLink.classList.add('active');
+        // Lazy load podcast voices
+        populatePodcastVoices();
+        fetchPodcastRVC();
+        checkLLMStatus(false);
+      }
+    }
+
+    // --- ORB SHADER SYSTEM ---
+    const orbCanvas = document.getElementById('orbCanvas');
+    const gl = orbCanvas.getContext('webgl');
+    const orbOverlay = document.getElementById('orbOverlay');
+
+    const vsSource = `
+      attribute vec2 position;
+      void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    `;
+
+    const fsSource = `
+      precision highp float;
+      uniform float uTime;
+      uniform vec2 uResolution;
+
+      vec3 palette(float t) {
+        vec3 a = vec3(0.5, 0.5, 0.5);
+        vec3 b = vec3(0.5, 0.5, 0.5);
+        vec3 c = vec3(1.0, 1.0, 1.0);
+        vec3 d = vec3(0.263, 0.416, 0.557);
+        return a + b * cos(6.28318 * (c * t + d));
+      }
+
+      void main() {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - uResolution.xy) / min(uResolution.y, uResolution.x);
+        float d = length(uv);
+        
+        // Breathing pulse
+        float pulse = 0.97 + 0.03 * sin(uTime * 1.5);
+        float r = 0.6 * pulse;
+        
+        // SOFT EDGE FRESNEL BLENDING
+        // Replace sharp discard with smooth alpha falloff
+        float edgeFade = smoothstep(r + 0.05, r - 0.25, d);
+        
+        // Iridescent Noise/Rotation
+        vec2 uv2 = uv;
+        float angle = uTime * 0.2;
+        mat2 rot = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+        uv2 *= rot;
+
+        float colorShift = d * 2.0 + uTime * 0.5 + sin(uv2.x * 3.0 + uTime) * 0.5;
+        
+        // Prismatic Streaks
+        float streaks = sin(uv2.x * 10.0 + uTime * 2.0) * sin(uv2.y * 5.0 - uTime) * 0.5 + 0.5;
+        streaks = pow(streaks, 10.0) * 0.5;
+
+        vec3 color = palette(colorShift);
+        
+        // Add prismatic highlights
+        color += streaks * vec3(1.0, 0.8, 1.0);
+        
+        // Fresnel Rim logic
+        float rim = 1.0 - smoothstep(r - 0.4, r, d);
+        color *= (rim * 0.8 + 0.2);
+        
+        gl_FragColor = vec4(color, edgeFade * edgeFade * 0.9);
+      }
+    `;
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
+    gl.linkProgram(program);
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, 'position');
+    const uTimeLocation = gl.getUniformLocation(program, 'uTime');
+    const uResLocation = gl.getUniformLocation(program, 'uResolution');
+
+    const splashLabel = document.getElementById('splashLabel');
+    const generatingLabel = document.getElementById('generatingLabel');
+
+    function renderOrb(time) {
+      orbCanvas.width = 450;
+      orbCanvas.height = 450;
+      gl.viewport(0, 0, 450, 450);
+      gl.clearColor(0, 0, 0, 0); // Transparent canvas background
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.useProgram(program);
+      gl.enableVertexAttribArray(positionLocation);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+      gl.uniform1f(uTimeLocation, time * 0.001);
+      gl.uniform2f(uResLocation, 450, 450);
+
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(renderOrb);
+    }
+    requestAnimationFrame(renderOrb);
+
+    // --- SPLASH SCREEN LIFECYCLE ---
+    async function checkServerReady() {
+      try {
+        const response = await secureFetch('/voices');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.voices && data.voices.length > 0) {
+            // Server ready! Populate and fade out splash
+            populateVoices(data.voices);
+            setTimeout(() => {
+              hideOrb();
+            }, 800);
+            return true;
+          }
+        }
+      } catch (err) {
+        console.log("Waiting for server...");
+      }
+      return false;
+    }
+
+    async function initSplash() {
+      const ready = await checkServerReady();
+      if (!ready) {
+        setTimeout(initSplash, 1500);
+      }
+    }
+
+    // Helper to populate voices from splash check
+    function populateVoices(voices) {
+      voiceSelect.innerHTML = '';
+      voices.forEach(voice => {
+        const option = document.createElement('option');
+        option.value = voice;
+        option.textContent = getFriendlyVoiceName(voice);
+        if (voice === 'af_bella') option.selected = true;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    // Initial trigger
+    initSplash();
+
+    function showOrb(mode = 'generating') {
+      if (mode === 'generating') {
+        splashLabel.style.display = 'none';
+        generatingLabel.style.display = 'block';
+      } else {
+        splashLabel.style.display = 'block';
+        generatingLabel.style.display = 'none';
+      }
+      orbOverlay.style.visibility = 'visible';
+      orbOverlay.style.display = 'flex';
+      setTimeout(() => orbOverlay.style.opacity = '1', 10);
+    }
+
+    function hideOrb() {
+      orbOverlay.style.opacity = '0';
+      setTimeout(() => {
+        orbOverlay.style.display = 'none';
+        orbOverlay.style.visibility = 'hidden';
+      }, 600);
+    }
+
+    // --- EXISTING LOGIC UPDATES ---
+    const inputText = document.getElementById('inputText');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+    const formatBtns = document.querySelectorAll('.radio-btn');
+    const generateBtn = document.getElementById('generateBtn');
+    const playerBox = document.getElementById('playerBox');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const downloadLink = document.getElementById('downloadLink');
+    const btnText = document.getElementById('btnText');
+    const loadingDots = document.getElementById('loadingDots');
+    const lowRamToggle = document.getElementById('lowRamToggle');
+    const emotionToggle = document.getElementById('emotionToggle');
+    const smartPronunciationToggle = document.getElementById('smartPronunciationToggle');
+    const groqApiKey = document.getElementById('groqApiKey');
+    const modeIndicator = document.getElementById('modeIndicator');
+    const tempPathContainer = document.getElementById('tempPathContainer');
+    const humanizeToggle = document.getElementById('humanizeToggle');
+    const rvcEnabled = document.getElementById('rvcEnabled');
+    const rvcControls = document.getElementById('rvcControls');
+    const rvcModelSelect = document.getElementById('rvcModelSelect');
+    const rvcIndexSelect = document.getElementById('rvcIndexSelect');
+    const rvcModelUpload = document.getElementById('rvcModelUpload');
+    const rvcIndexUpload = document.getElementById('rvcIndexUpload');
+    const rvcPitchSlider = document.getElementById('rvcPitchSlider');
+    const rvcPitchValue = document.getElementById('rvcPitchValue');
+    const rvcIndexSlider = document.getElementById('rvcIndexSlider');
+    const rvcIndexValue = document.getElementById('rvcIndexValue');
+    const tempPathInput = document.getElementById('tempPathInput');
+    const progressStatus = document.getElementById('progressStatus');
+    const consoleHeader = document.getElementById('consoleHeader');
+    const consolePanel = document.getElementById('consolePanel');
+    const consoleOutput = document.getElementById('consoleOutput');
+    const consoleToggleArrow = document.getElementById('consoleToggleArrow');
+    const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+
+    let currentFormat = 'wav';
+
+    // Low RAM Toggle logic
+    lowRamToggle.addEventListener('change', () => {
+      tempPathContainer.style.display = lowRamToggle.checked ? 'block' : 'none';
+    });
+
+    // Console Toggle Logic
+    let consoleVisible = false;
+    function toggleConsole(show) {
+      consoleVisible = show !== undefined ? show : !consoleVisible;
+      consolePanel.style.display = consoleVisible ? 'block' : 'none';
+      consoleToggleArrow.textContent = consoleVisible ? '▲' : '▼';
+      clearConsoleBtn.style.display = consoleVisible ? 'block' : 'none';
+      if (consoleVisible) {
+        consolePanel.scrollTop = consolePanel.scrollHeight;
+      }
+    }
+
+    consoleHeader.addEventListener('click', () => toggleConsole());
+    clearConsoleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      consoleOutput.innerHTML = '<div style="color: #666; font-style: italic;"># Console cleared.</div>';
+    });
+
+    // SSE Log Stream
+    const logSource = new EventSource('/logs');
+    logSource.onmessage = (e) => {
+      const line = document.createElement('div');
+      const text = e.data;
+
+      if (text.includes('INFO:')) {
+        line.style.color = '#00ff88';
+      } else if (text.includes('WARNING:')) {
+        line.style.color = '#ffaa00';
+      } else if (text.includes('ERROR:')) {
+        line.style.color = '#ff4444';
+      } else {
+        line.style.color = '#888';
+      }
+
+      line.textContent = text;
+      consoleOutput.appendChild(line);
+
+      while (consoleOutput.children.length > 200) {
+        consoleOutput.removeChild(consoleOutput.firstChild);
+      }
+
+      if (consoleVisible) {
+        consolePanel.scrollTop = consolePanel.scrollHeight;
+      }
+    };
+
+    // Speed Slider Update
+    speedSlider.addEventListener('input', (e) => {
+      speedValue.textContent = `${e.target.value}x`;
+    });
+
+    // RVC UI Updates
+    rvcEnabled.addEventListener('change', () => {
+      rvcControls.style.display = rvcEnabled.checked ? 'flex' : 'none';
+      if (rvcEnabled.checked) fetchRVCModels();
+    });
+
+    rvcPitchSlider.addEventListener('input', (e) => {
+      rvcPitchValue.textContent = e.target.value;
+    });
+
+    rvcIndexSlider.addEventListener('input', (e) => {
+      rvcIndexValue.textContent = e.target.value;
+    });
+
+    async function fetchRVCModels() {
+      try {
+        const res = await secureFetch('/rvc_models');
+        const data = await res.json();
+
+        const currentModel = rvcModelSelect.value;
+        const currentIndex = rvcIndexSelect.value;
+
+        rvcModelSelect.innerHTML = '<option value="">Select a model...</option>';
+        data.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = m;
+          // Auto-select CBTNarrator if no model is selected
+          if (m === currentModel || (!currentModel && m === 'CBTNarrator.pth')) opt.selected = true;
+          rvcModelSelect.appendChild(opt);
+        });
+
+        rvcIndexSelect.innerHTML = '<option value="">Select an index...</option>';
+        data.indices.forEach(i => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = i;
+          // Auto-select matching index
+          if (i === currentIndex || (!currentIndex && i.includes('CBTNarrator'))) opt.selected = true;
+          rvcIndexSelect.appendChild(opt);
+        });
+      } catch (err) { console.error(err); }
+    }
+
+    async function handleFileUpload(input, endpoint) {
+      if (!input.files || !input.files[0]) return;
+      const formData = new FormData();
+      formData.append('file', input.files[0]);
+
+      try {
+        const res = await secureFetch(endpoint, { method: 'POST', body: formData });
+        if (res.ok) fetchRVCModels();
+      } catch (err) { console.error(err); }
+    }
+
+    rvcModelUpload.addEventListener('change', () => handleFileUpload(rvcModelUpload, '/upload_model'));
+    rvcIndexUpload.addEventListener('change', () => handleFileUpload(rvcIndexUpload, '/upload_model'));
+
+    // Format Radio Update
+    formatBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        formatBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFormat = btn.dataset.value;
+      });
+    });
+
+    // Voice mapping for better display
+    const voiceMap = {
+      "af_": "🇺🇸 Am. Female",
+      "am_": "🇺🇸 Am. Male",
+      "bf_": "🇬🇧 Br. Female",
+      "bm_": "🇬🇧 Br. Male",
+      "jf_": "🇯🇵 Jap. Female",
+      "jm_": "🇯🇵 Jap. Male",
+      "zf_": "🇨🇳 Chi. Female",
+      "zm_": "🇨🇳 Chi. Male",
+      "ef_": "🇪🇸 Spa. Female",
+      "em_": "🇪🇸 Spa. Male",
+      "ff_": "🇫🇷 Fre. Female",
+      "hf_": "🇮🇳 Hin. Female",
+      "hm_": "🇮🇳 Hin. Male",
+      "if_": "🇮🇹 Ita. Female",
+      "im_": "🇮🇹 Ita. Male",
+      "pf_": "🇵🇹 Por. Female",
+      "pm_": "🇵🇹 Por. Male"
+    };
+
+    function getFriendlyVoiceName(id) {
+      const prefix = id.substring(0, 3);
+      const name = id.substring(3).charAt(0).toUpperCase() + id.substring(4);
+      const accent = voiceMap[prefix] || "Unknown Accent";
+      return `${accent} (${name})`;
+    }
+
+    // Fetch Voices
+    async function fetchVoices() {
+      try {
+        const response = await secureFetch('/voices');
+        const data = await response.json();
+        voiceSelect.innerHTML = '';
+        data.voices.forEach(voice => {
+          const option = document.createElement('option');
+          option.value = voice;
+          option.textContent = getFriendlyVoiceName(voice);
+          if (voice === 'af_bella') option.selected = true;
+          voiceSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Failed to fetch voices', err);
+      }
+    }
+
+    // Removal of redundant fetchVoices call since splash logic handles it
+    // fetchVoices();
+
+    // Generate Action
+    generateBtn.addEventListener('click', async () => {
+      const text = inputText.value.trim();
+      if (!text) {
+        alert('Please enter some text.');
+        return;
+      }
+
+      // UI Loading State
+      generateBtn.disabled = true;
+      btnText.textContent = 'Preparing...';
+      loadingDots.style.display = 'inline-block';
+      playerBox.style.display = 'none';
+      progressStatus.style.display = 'block';
+      progressStatus.textContent = 'Initializing engine...';
+
+      // Auto-open console
+      toggleConsole(true);
+
+      showOrb();
+
+      try {
+        const payload = {
+          text: text,
+          voice: voiceSelect.value,
+          speed: parseFloat(speedSlider.value),
+          format: currentFormat,
+          low_ram_mode: lowRamToggle.checked,
+          emotion_narration: emotionToggle.checked,
+          smart_pronunciation: smartPronunciationToggle.checked,
+          groq_api_key: groqApiKey.value,
+          humanize: humanizeToggle.checked,
+          rvc_enabled: rvcEnabled.checked,
+          rvc_model: rvcModelSelect.value,
+          rvc_index: rvcIndexSelect.value,
+          rvc_pitch: parseInt(rvcPitchSlider.value),
+          rvc_index_rate: parseFloat(rvcIndexSlider.value),
+          temp_path: tempPathInput.value
+        };
+
+        const response = await secureFetch('/generate_stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = JSON.parse(line.substring(6));
+
+              if (data.mode_indicator) {
+                modeIndicator.textContent = data.mode_indicator;
+                modeIndicator.style.display = 'block';
+              }
+
+              if (data.status) {
+                progressStatus.textContent = data.status;
+                btnText.textContent = 'Synthesizing...';
+              }
+
+              if (data.success) {
+                audioPlayer.src = data.url;
+                downloadLink.href = data.download_url; // Use persistent-cleanup download link
+                downloadLink.download = data.filename;
+                playerBox.style.display = 'flex';
+                progressStatus.textContent = 'Synthesis complete.';
+                audioPlayer.play();
+              }
+
+              if (data.error) {
+                alert('Error: ' + data.error);
+                progressStatus.textContent = 'Error occurred.';
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred during synthesis.');
+        progressStatus.textContent = 'System error.';
+      } finally {
+        generateBtn.disabled = false;
+        btnText.textContent = 'Generate Speech';
+        loadingDots.style.display = 'none';
+        hideOrb();
+        setTimeout(() => {
+          if (!generateBtn.disabled) progressStatus.style.display = 'none';
+        }, 5000);
+      }
+    });
+
+    // --- PODCAST LOGIC ---
+    const podcastSource = document.getElementById('podcastSource');
+    const podcastScript = document.getElementById('podcastScript');
+    const host1NameInput = document.getElementById('host1Name');
+    const host2NameInput = document.getElementById('host2Name');
+    const btnGenerateScript = document.getElementById('btnGenerateScript');
+    const btnGeneratePodcast = document.getElementById('btnGeneratePodcast');
+    const podcastProgress = document.getElementById('podcastProgress');
+    const podcastStatusText = document.getElementById('podcastStatusText');
+    const host1Voice = document.getElementById('host1Voice');
+    const host2Voice = document.getElementById('host2Voice');
+    const host1Rvc = document.getElementById('host1Rvc');
+    const host2Rvc = document.getElementById('host2Rvc');
+    const host1Index = document.getElementById('host1Index');
+    const host2Index = document.getElementById('host2Index');
+    const podcastSpeed = document.getElementById('podcastSpeed');
+    const podcastSpeedVal = document.getElementById('podcastSpeedVal');
+    const podcastPitch = document.getElementById('podcastPitch');
+    const podcastPitchVal = document.getElementById('podcastPitchVal');
+    const podcastFormat = document.getElementById('podcastFormat');
+
+    // UI Updates
+    if (podcastSpeed) podcastSpeed.addEventListener('input', (e) => podcastSpeedVal.textContent = e.target.value);
+    if (podcastPitch) podcastPitch.addEventListener('input', (e) => podcastPitchVal.textContent = e.target.value);
+
+    async function populatePodcastVoices() {
+      if (host1Voice.children.length > 0) return;
+      const res = await secureFetch('/voices');
+      const data = await res.json();
+      const voices = data.voices;
+
+      [host1Voice, host2Voice].forEach((select, idx) => {
+        voices.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = v;
+          if (idx === 0 && v === 'af_bella') opt.selected = true;
+          if (idx === 1 && v === 'bm_george') opt.selected = true;
+          select.appendChild(opt);
+        });
+      });
+    }
+
+    async function fetchPodcastRVC() {
+      if (host1Rvc.children.length > 1) return;
+      const res = await secureFetch('/rvc_models');
+      const data = await res.json();
+
+      [host1Rvc, host2Rvc].forEach(select => {
+        data.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = m;
+          select.appendChild(opt);
+        });
+      });
+
+      [host1Index, host2Index].forEach(select => {
+        data.indices.forEach(i => {
+          const opt = document.createElement('option');
+          opt.value = opt.textContent = i;
+          select.appendChild(opt);
+        });
+      });
+    }
+
+    // LLM Status & Setup
+    const llmBadge = document.getElementById('llm-status-badge');
+    const llmBadgeText = document.getElementById('llmBadgeText');
+    const llmBadgeIcon = document.getElementById('llmBadgeIcon');
+    const llmSetupModal = document.getElementById('llm-setup-modal');
+
+    function toggleLLMSetup(show) {
+      const setupEl = document.getElementById('llm-setup-modal');
+      const badgeEl = document.getElementById('llm-status-badge');
+      if (!setupEl) return;
+      if (show) setupEl.classList.add('active');
+      else setupEl.classList.remove('active');
+      if (badgeEl) badgeEl.classList.toggle('hidden', show);
+    }
+
+    async function saveSetupGroqKey() {
+      const key = document.getElementById('setupGroqKey').value.trim();
+      if (!key) return alert('Please enter a key');
+      const res = await secureFetch('/save_groq_key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Groq API Key saved successfully!');
+        checkLLMStatus(false);
+      }
+    }
+
+    async function checkLLMStatus(showToast = false) {
+      try {
+        const res = await secureFetch('/llm_status');
+        const data = await res.json();
+
+        if (llmBadge) llmBadge.className = 'llm-badge ' + data.backend;
+
+        if (data.backend === 'groq') {
+          if (llmBadgeText) llmBadgeText.textContent = 'Groq Ready';
+          if (llmBadgeIcon) llmBadgeIcon.textContent = '🚀';
+          if (showToast) alert('Groq Cloud detected!');
+          toggleLLMSetup(false);
+        } else {
+          if (llmBadgeText) llmBadgeText.textContent = 'Groq Key Required';
+          if (llmBadgeIcon) llmBadgeIcon.textContent = '⚠️';
+        }
+      } catch (err) {
+        console.error('Failed to check LLM status', err);
+      }
+    }
+
+    // Check status every 30s
+    setInterval(() => checkLLMStatus(false), 30000);
+    checkLLMStatus(false);
+
+    // Generate Script
+    btnGenerateScript.addEventListener('click', async () => {
+      const source = podcastSource.value.trim();
+      const h1 = host1NameInput.value.trim();
+      const h2 = host2NameInput.value.trim();
+
+      if (!source) return alert('Please enter source material');
+
+      btnGenerateScript.disabled = true;
+      btnGenerateScript.textContent = '✨ Generating Script...';
+
+      let res;
+      try {
+        res = await secureFetch('/generate_script', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ source_text: source, host1_name: h1, host2_name: h2 })
+        });
+
+        if (res.status === 503) {
+          toggleLLMSetup(true);
+          throw new Error('No LLM backend available. Please configure.');
+        }
+
+        const data = await res.json();
+        if (data.script) {
+          podcastScript.value = data.script;
+          btnGeneratePodcast.disabled = false;
+        } else {
+          alert('Error: ' + (data.detail || 'Failed to generate script'));
+        }
+      } catch (err) {
+        console.error(err);
+        if (res && res.status !== 503) alert('Script generation failed: ' + err.message);
+        else if (!res) alert('Connection failed. Is the server running?');
+      } finally {
+        btnGenerateScript.disabled = false;
+        btnGenerateScript.textContent = '✨ Generate Script';
+      }
+    });
+
+    // Generate Podcast Audio
+    btnGeneratePodcast.addEventListener('click', async () => {
+      const script = podcastScript.value.trim();
+      if (!script) return alert('Script is empty');
+
+      btnGeneratePodcast.disabled = true;
+      podcastProgress.classList.remove('hidden');
+      showOrb();
+
+      const payload = {
+        script,
+        host1_name: host1NameInput.value,
+        host2_name: host2NameInput.value,
+        host1_voice: host1Voice.value,
+        host2_voice: host2Voice.value,
+        host1_rvc: host1Rvc.value,
+        host1_index: host1Index.value,
+        host2_rvc: host2Rvc.value,
+        host2_index: host2Index.value,
+        speed: parseFloat(podcastSpeed.value),
+        pitch: parseInt(podcastPitch.value),
+        export_format: podcastFormat.value
+      };
+
+      try {
+        const response = await secureFetch('/generate_podcast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = JSON.parse(line.substring(6));
+              if (data.status) podcastStatusText.textContent = data.status;
+              if (data.success) {
+                podcastStatusText.textContent = 'Podcast complete!';
+                const url = `/outputs/${data.filename}`;
+                setupPodcastPlayer(url, data.filename);
+              }
+              if (data.error) throw new Error(data.error);
+            }
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Podcast generation failed: ' + err.message);
+      } finally {
+        btnGeneratePodcast.disabled = false;
+        hideOrb();
+      }
+    });
+
+    let podcastAudio = null;
+    function setupPodcastPlayer(url, filename) {
+      const player = document.getElementById('podcastPlayer');
+      const download = document.getElementById('btnPodcastDownload');
+      const playBtn = document.getElementById('btnPodcastPlay');
+      const timeDisplay = document.getElementById('podcastTime');
+
+      player.classList.remove('hidden');
+      download.href = url;
+      download.download = filename;
+
+      if (podcastAudio) {
+        podcastAudio.pause();
+        podcastAudio.src = '';
+      }
+
+      podcastAudio = new Audio(url);
+
+      playBtn.onclick = () => {
+        if (podcastAudio.paused) podcastAudio.play();
+        else podcastAudio.pause();
+      };
+
+      podcastAudio.onplay = () => {
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>';
+      };
+
+      podcastAudio.onpause = () => {
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+      };
+
+      podcastAudio.ontimeupdate = () => {
+        const cur = formatTime(podcastAudio.currentTime);
+        const dur = formatTime(podcastAudio.duration || 0);
+        timeDisplay.textContent = `${cur} / ${dur}`;
+      };
+
+      function formatTime(s) {
+        if (isNaN(s)) return '0:00';
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return `${m}:${sec.toString().padStart(2, '0')}`;
+      }
+    }
+
+    // Initial Example Text
+    inputText.value = "Welcome to Lumina. Our mission is to bridge the gap between human thought and digital expression. Experience speech that feels as natural as your own.";
+
+    // --- SECURITY ENHANCEMENTS ---
+
+    // 11 — Localhost-only warning
+    if (!['localhost', '127.0.0.1', ''].includes(window.location.hostname)) {
+      document.body.insertAdjacentHTML('afterbegin', `
+            <div style="background:#ff4444;color:white;padding:12px;text-align:center;font-weight:bold;z-index:99999;position:fixed;top:0;width:100%;box-shadow:0 4px 15px rgba(0,0,0,0.3)">
+                ⚠️ WARNING: Lumina is designed for local use only. 
+                Do not expose this to the public internet — your system is at risk.
+            </div>
+        `);
+    }
+
+    // 7 — CSRF protection
+    let csrfToken = null;
+
+    async function refreshCsrf() {
+      try {
+        const res = await nativeFetch("/csrf_token");
+        const data = await res.json();
+        csrfToken = data.token;
+      } catch (err) {
+        console.error("Failed to fetch CSRF token", err);
+      }
+    }
+    refreshCsrf();
+
+    // Helper to wrap fetch with CSRF token
+    async function secureFetch(url, options = {}) {
+      if (options.method && options.method.toUpperCase() === 'POST') {
+        if (!csrfToken) await refreshCsrf();
+        options.headers = {
+          ...options.headers,
+          "X-CSRF-Token": csrfToken
+        };
+      }
+      const res = await nativeFetch(url, options);
+      // If CSRF failed (e.g. token expired/one-time use), refresh for next time
+      if (options.method && options.method.toUpperCase() === 'POST') {
+        refreshCsrf();
+      }
+      return res;
+    }
+
+  </script>
+  <!-- LLM SETUP MODAL -->
+  <div id="llm-setup-modal" class="modal-overlay">
+    <div class="setup-modal">
+      <div class="setup-title">🚀 Groq API Setup</div>
+      <div class="setup-sub">A Groq API key is required to convert your source material into a podcast script.</div>
+
+      <div class="option-card">
+        <div class="option-header">🔑 Configure Groq Cloud</div>
+        <div class="option-steps">
+          1. Get a free key at <code>console.groq.com</code><br>
+          2. Paste your API key below:
+        </div>
+        <div class="setup-input-group">
+          <input type="password" id="setupGroqKey" class="setup-input" placeholder="gsk_...">
+          <button onclick="saveSetupGroqKey()" class="setup-btn-save">Save</button>
+        </div>
+        <div class="option-footer" style="margin-top: 12px;">
+          <div class="footer-item check">✅ High speed Llama 3.3 70B</div>
+          <div class="footer-item check">✅ Persistent in .env file</div>
+        </div>
+      </div>
+
+      <div class="setup-actions">
+        <button onclick="checkLLMStatus(true)" class="btn-retry">Check Status</button>
+        <button onclick="toggleLLMSetup(false)" class="btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
