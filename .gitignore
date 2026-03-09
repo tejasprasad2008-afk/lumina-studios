@@ -15,3 +15,12 @@ venv*/
 *.pth
 *.index
 bedtime_generation.log
+venv/
+venv_new/
+outputs/
+kokoro_temp/
+rvc_models/
+foley/
+sfx/
+__pycache__/
+Kokoro-TTS-Local/
