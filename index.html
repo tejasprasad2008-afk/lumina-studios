@@ -2021,6 +2021,30 @@
   <script>
     const nativeFetch = window.fetch.bind(window);
 
+    // --- CSRF SYSTEM ---
+    let csrfToken = null;
+    async function initCSRF() {
+      try {
+        const res = await nativeFetch("/csrf_token");
+        const data = await res.json();
+        csrfToken = data.token;
+      } catch (err) {
+        console.error("CSRF init failed:", err);
+      }
+    }
+    initCSRF();
+
+    async function secureFetch(url, options = {}) {
+      if (!csrfToken) await initCSRF();
+      options.headers = {
+        ...options.headers,
+        "X-CSRF-Token": csrfToken
+      };
+      csrfToken = null; // one-time use
+      await initCSRF(); // pre-fetch next
+      return nativeFetch(url, options);
+    }
+
     // Intersection Observer for scroll animations
     const observerOptions = {
       threshold: 0.1
@@ -2271,9 +2295,11 @@
     let currentFormat = 'wav';
 
     // Low RAM Toggle logic
-    lowRamToggle.addEventListener('change', () => {
-      tempPathContainer.style.display = lowRamToggle.checked ? 'block' : 'none';
-    });
+    if (lowRamToggle) {
+      lowRamToggle.addEventListener('change', () => {
+        tempPathContainer.style.display = lowRamToggle.checked ? 'block' : 'none';
+      });
+    }
 
     // Console Toggle Logic
     let consoleVisible = false;
@@ -2287,58 +2313,75 @@
       }
     }
 
-    consoleHeader.addEventListener('click', () => toggleConsole());
-    clearConsoleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      consoleOutput.innerHTML = '<div style="color: #666; font-style: italic;"># Console cleared.</div>';
-    });
+    if (consoleHeader) consoleHeader.addEventListener('click', () => toggleConsole());
+    if (clearConsoleBtn) {
+      clearConsoleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        consoleOutput.innerHTML = '<div style="color: #666; font-style: italic;"># Console cleared.</div>';
+      });
+    }
 
     // SSE Log Stream
-    const logSource = new EventSource('/logs');
-    logSource.onmessage = (e) => {
-      const line = document.createElement('div');
-      const text = e.data;
+    function connectToLogs() {
+      const logSource = new EventSource('/logs');
+      logSource.onmessage = (e) => {
+        const line = document.createElement('div');
+        const text = e.data;
 
-      if (text.includes('INFO:')) {
-        line.style.color = '#00ff88';
-      } else if (text.includes('WARNING:')) {
-        line.style.color = '#ffaa00';
-      } else if (text.includes('ERROR:')) {
-        line.style.color = '#ff4444';
-      } else {
-        line.style.color = '#888';
-      }
+        if (text.includes('INFO:')) {
+          line.style.color = '#00ff88';
+        } else if (text.includes('WARNING:')) {
+          line.style.color = '#ffaa00';
+        } else if (text.includes('ERROR:')) {
+          line.style.color = '#ff4444';
+        } else {
+          line.style.color = '#888';
+        }
 
-      line.textContent = text;
-      consoleOutput.appendChild(line);
+        line.textContent = text;
+        consoleOutput.appendChild(line);
 
-      while (consoleOutput.children.length > 200) {
-        consoleOutput.removeChild(consoleOutput.firstChild);
-      }
+        while (consoleOutput.children.length > 200) {
+          consoleOutput.removeChild(consoleOutput.firstChild);
+        }
 
-      if (consoleVisible) {
-        consolePanel.scrollTop = consolePanel.scrollHeight;
-      }
-    };
+        if (consoleVisible) {
+          consolePanel.scrollTop = consolePanel.scrollHeight;
+        }
+      };
+
+      logSource.onerror = () => {
+        logSource.close();
+        setTimeout(connectToLogs, 3000);
+      };
+    }
+    connectToLogs();
 
     // Speed Slider Update
-    speedSlider.addEventListener('input', (e) => {
-      speedValue.textContent = `${e.target.value}x`;
-    });
+    if (speedSlider) {
+      speedSlider.addEventListener('input', (e) => {
+        speedValue.textContent = `${e.target.value}x`;
+      });
+    }
 
-    // RVC UI Updates
-    rvcEnabled.addEventListener('change', () => {
-      rvcControls.style.display = rvcEnabled.checked ? 'flex' : 'none';
-      if (rvcEnabled.checked) fetchRVCModels();
-    });
+    if (rvcEnabled) {
+      rvcEnabled.addEventListener('change', () => {
+        rvcControls.style.display = rvcEnabled.checked ? 'flex' : 'none';
+        if (rvcEnabled.checked) fetchRVCModels();
+      });
+    }
 
-    rvcPitchSlider.addEventListener('input', (e) => {
-      rvcPitchValue.textContent = e.target.value;
-    });
+    if (rvcPitchSlider) {
+      rvcPitchSlider.addEventListener('input', (e) => {
+        rvcPitchValue.textContent = e.target.value;
+      });
+    }
 
-    rvcIndexSlider.addEventListener('input', (e) => {
-      rvcIndexValue.textContent = e.target.value;
-    });
+    if (rvcIndexSlider) {
+      rvcIndexSlider.addEventListener('input', (e) => {
+        rvcIndexValue.textContent = e.target.value;
+      });
+    }
 
     async function fetchRVCModels() {
       try {
@@ -2379,17 +2422,21 @@
       } catch (err) { console.error(err); }
     }
 
-    rvcModelUpload.addEventListener('change', () => handleFileUpload(rvcModelUpload, '/upload_model'));
-    rvcIndexUpload.addEventListener('change', () => handleFileUpload(rvcIndexUpload, '/upload_model'));
+    if (rvcModelUpload) rvcModelUpload.addEventListener('change', () => handleFileUpload(rvcModelUpload, '/upload_model'));
+    if (rvcIndexUpload) rvcIndexUpload.addEventListener('change', () => handleFileUpload(rvcIndexUpload, '/upload_model'));
 
     // Format Radio Update
-    formatBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        formatBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFormat = btn.dataset.value;
+    if (formatBtns) {
+      formatBtns.forEach(btn => {
+        if (btn) {
+          btn.addEventListener('click', () => {
+            formatBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFormat = btn.dataset.value;
+          });
+        }
       });
-    });
+    }
 
     // Voice mapping for better display
     const voiceMap = {
@@ -2441,105 +2488,107 @@
     // fetchVoices();
 
     // Generate Action
-    generateBtn.addEventListener('click', async () => {
-      const text = inputText.value.trim();
-      if (!text) {
-        alert('Please enter some text.');
-        return;
-      }
+    if (generateBtn) {
+      generateBtn.addEventListener('click', async () => {
+        const text = inputText.value.trim();
+        if (!text) {
+          alert('Please enter some text.');
+          return;
+        }
 
-      // UI Loading State
-      generateBtn.disabled = true;
-      btnText.textContent = 'Preparing...';
-      loadingDots.style.display = 'inline-block';
-      playerBox.style.display = 'none';
-      progressStatus.style.display = 'block';
-      progressStatus.textContent = 'Initializing engine...';
+        // UI Loading State
+        generateBtn.disabled = true;
+        btnText.textContent = 'Preparing...';
+        loadingDots.style.display = 'inline-block';
+        playerBox.style.display = 'none';
+        progressStatus.style.display = 'block';
+        progressStatus.textContent = 'Initializing engine...';
 
-      // Auto-open console
-      toggleConsole(true);
+        // Auto-open console
+        toggleConsole(true);
 
-      showOrb();
+        showOrb();
 
-      try {
-        const payload = {
-          text: text,
-          voice: voiceSelect.value,
-          speed: parseFloat(speedSlider.value),
-          format: currentFormat,
-          low_ram_mode: lowRamToggle.checked,
-          emotion_narration: emotionToggle.checked,
-          smart_pronunciation: smartPronunciationToggle.checked,
-          groq_api_key: groqApiKey.value,
-          humanize: humanizeToggle.checked,
-          rvc_enabled: rvcEnabled.checked,
-          rvc_model: rvcModelSelect.value,
-          rvc_index: rvcIndexSelect.value,
-          rvc_pitch: parseInt(rvcPitchSlider.value),
-          rvc_index_rate: parseFloat(rvcIndexSlider.value),
-          temp_path: tempPathInput.value
-        };
+        try {
+          const payload = {
+            text: text,
+            voice: voiceSelect.value,
+            speed: parseFloat(speedSlider.value),
+            format: currentFormat,
+            low_ram_mode: lowRamToggle.checked,
+            emotion_narration: emotionToggle.checked,
+            smart_pronunciation: smartPronunciationToggle.checked,
+            groq_api_key: groqApiKey.value,
+            humanize: humanizeToggle.checked,
+            rvc_enabled: rvcEnabled.checked,
+            rvc_model: rvcModelSelect.value,
+            rvc_index: rvcIndexSelect.value,
+            rvc_pitch: parseInt(rvcPitchSlider.value),
+            rvc_index_rate: parseFloat(rvcIndexSlider.value),
+            temp_path: tempPathInput.value
+          };
 
-        const response = await secureFetch('/generate_stream', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+          const response = await secureFetch('/generate_stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
 
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = JSON.parse(line.substring(6));
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = JSON.parse(line.substring(6));
 
-              if (data.mode_indicator) {
-                modeIndicator.textContent = data.mode_indicator;
-                modeIndicator.style.display = 'block';
-              }
+                if (data.mode_indicator) {
+                  modeIndicator.textContent = data.mode_indicator;
+                  modeIndicator.style.display = 'block';
+                }
 
-              if (data.status) {
-                progressStatus.textContent = data.status;
-                btnText.textContent = 'Synthesizing...';
-              }
+                if (data.status) {
+                  progressStatus.textContent = data.status;
+                  btnText.textContent = 'Synthesizing...';
+                }
 
-              if (data.success) {
-                audioPlayer.src = data.url;
-                downloadLink.href = data.download_url; // Use persistent-cleanup download link
-                downloadLink.download = data.filename;
-                playerBox.style.display = 'flex';
-                progressStatus.textContent = 'Synthesis complete.';
-                audioPlayer.play();
-              }
+                if (data.success) {
+                  audioPlayer.src = data.url;
+                  downloadLink.href = data.download_url; // Use persistent-cleanup download link
+                  downloadLink.download = data.filename;
+                  playerBox.style.display = 'flex';
+                  progressStatus.textContent = 'Synthesis complete.';
+                  audioPlayer.play();
+                }
 
-              if (data.error) {
-                alert('Error: ' + data.error);
-                progressStatus.textContent = 'Error occurred.';
+                if (data.error) {
+                  alert('Error: ' + data.error);
+                  progressStatus.textContent = 'Error occurred.';
+                }
               }
             }
           }
+        } catch (err) {
+          console.error(err);
+          alert('An error occurred during synthesis.');
+          progressStatus.textContent = 'System error.';
+        } finally {
+          generateBtn.disabled = false;
+          btnText.textContent = 'Generate Speech';
+          loadingDots.style.display = 'none';
+          hideOrb();
+          setTimeout(() => {
+            if (!generateBtn.disabled) progressStatus.style.display = 'none';
+          }, 5000);
         }
-      } catch (err) {
-        console.error(err);
-        alert('An error occurred during synthesis.');
-        progressStatus.textContent = 'System error.';
-      } finally {
-        generateBtn.disabled = false;
-        btnText.textContent = 'Generate Speech';
-        loadingDots.style.display = 'none';
-        hideOrb();
-        setTimeout(() => {
-          if (!generateBtn.disabled) progressStatus.style.display = 'none';
-        }, 5000);
-      }
-    });
+      });
+    }
 
     // --- PODCAST LOGIC ---
     const podcastSource = document.getElementById('podcastSource');
@@ -2661,107 +2710,111 @@
     checkLLMStatus(false);
 
     // Generate Script
-    btnGenerateScript.addEventListener('click', async () => {
-      const source = podcastSource.value.trim();
-      const h1 = host1NameInput.value.trim();
-      const h2 = host2NameInput.value.trim();
+    if (btnGenerateScript) {
+      btnGenerateScript.addEventListener('click', async () => {
+        const source = podcastSource.value.trim();
+        const h1 = host1NameInput.value.trim();
+        const h2 = host2NameInput.value.trim();
 
-      if (!source) return alert('Please enter source material');
+        if (!source) return alert('Please enter source material');
 
-      btnGenerateScript.disabled = true;
-      btnGenerateScript.textContent = '✨ Generating Script...';
+        btnGenerateScript.disabled = true;
+        btnGenerateScript.textContent = '✨ Generating Script...';
 
-      let res;
-      try {
-        res = await secureFetch('/generate_script', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ source_text: source, host1_name: h1, host2_name: h2 })
-        });
+        let res;
+        try {
+          res = await secureFetch('/generate_script', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source_text: source, host1_name: h1, host2_name: h2 })
+          });
 
-        if (res.status === 503) {
-          toggleLLMSetup(true);
-          throw new Error('No LLM backend available. Please configure.');
+          if (res.status === 503) {
+            toggleLLMSetup(true);
+            throw new Error('No LLM backend available. Please configure.');
+          }
+
+          const data = await res.json();
+          if (data.script) {
+            podcastScript.value = data.script;
+            btnGeneratePodcast.disabled = false;
+          } else {
+            alert('Error: ' + (data.detail || 'Failed to generate script'));
+          }
+        } catch (err) {
+          console.error(err);
+          if (res && res.status !== 503) alert('Script generation failed: ' + err.message);
+          else if (!res) alert('Connection failed. Is the server running?');
+        } finally {
+          btnGenerateScript.disabled = false;
+          btnGenerateScript.textContent = '✨ Generate Script';
         }
-
-        const data = await res.json();
-        if (data.script) {
-          podcastScript.value = data.script;
-          btnGeneratePodcast.disabled = false;
-        } else {
-          alert('Error: ' + (data.detail || 'Failed to generate script'));
-        }
-      } catch (err) {
-        console.error(err);
-        if (res && res.status !== 503) alert('Script generation failed: ' + err.message);
-        else if (!res) alert('Connection failed. Is the server running?');
-      } finally {
-        btnGenerateScript.disabled = false;
-        btnGenerateScript.textContent = '✨ Generate Script';
-      }
-    });
+      });
+    }
 
     // Generate Podcast Audio
-    btnGeneratePodcast.addEventListener('click', async () => {
-      const script = podcastScript.value.trim();
-      if (!script) return alert('Script is empty');
+    if (btnGeneratePodcast) {
+      btnGeneratePodcast.addEventListener('click', async () => {
+        const script = podcastScript.value.trim();
+        if (!script) return alert('Script is empty');
 
-      btnGeneratePodcast.disabled = true;
-      podcastProgress.classList.remove('hidden');
-      showOrb();
+        btnGeneratePodcast.disabled = true;
+        podcastProgress.classList.remove('hidden');
+        showOrb();
 
-      const payload = {
-        script,
-        host1_name: host1NameInput.value,
-        host2_name: host2NameInput.value,
-        host1_voice: host1Voice.value,
-        host2_voice: host2Voice.value,
-        host1_rvc: host1Rvc.value,
-        host1_index: host1Index.value,
-        host2_rvc: host2Rvc.value,
-        host2_index: host2Index.value,
-        speed: parseFloat(podcastSpeed.value),
-        pitch: parseInt(podcastPitch.value),
-        export_format: podcastFormat.value
-      };
+        const payload = {
+          script,
+          host1_name: host1NameInput.value,
+          host2_name: host2NameInput.value,
+          host1_voice: host1Voice.value,
+          host2_voice: host2Voice.value,
+          host1_rvc: host1Rvc.value,
+          host1_index: host1Index.value,
+          host2_rvc: host2Rvc.value,
+          host2_index: host2Index.value,
+          speed: parseFloat(podcastSpeed.value),
+          pitch: parseInt(podcastPitch.value),
+          export_format: podcastFormat.value
+        };
 
-      try {
-        const response = await secureFetch('/generate_podcast', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        try {
+          const response = await secureFetch('/generate_podcast', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = JSON.parse(line.substring(6));
-              if (data.status) podcastStatusText.textContent = data.status;
-              if (data.success) {
-                podcastStatusText.textContent = 'Podcast complete!';
-                const url = `/outputs/${data.filename}`;
-                setupPodcastPlayer(url, data.filename);
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = JSON.parse(line.substring(6));
+                if (data.status) podcastStatusText.textContent = data.status;
+                if (data.success) {
+                  podcastStatusText.textContent = 'Podcast complete!';
+                  const url = `/outputs/${data.filename}`;
+                  setupPodcastPlayer(url, data.filename);
+                }
+                if (data.error) throw new Error(data.error);
               }
-              if (data.error) throw new Error(data.error);
             }
           }
+        } catch (err) {
+          console.error(err);
+          alert('Podcast generation failed: ' + err.message);
+        } finally {
+          btnGeneratePodcast.disabled = false;
+          hideOrb();
         }
-      } catch (err) {
-        console.error(err);
-        alert('Podcast generation failed: ' + err.message);
-      } finally {
-        btnGeneratePodcast.disabled = false;
-        hideOrb();
-      }
-    });
+      });
+    }
 
     let podcastAudio = null;
     function setupPodcastPlayer(url, filename) {
@@ -2808,51 +2861,7 @@
       }
     }
 
-    // Initial Example Text
-    inputText.value = "Welcome to Lumina. Our mission is to bridge the gap between human thought and digital expression. Experience speech that feels as natural as your own.";
 
-    // --- SECURITY ENHANCEMENTS ---
-
-    // 11 — Localhost-only warning
-    if (!['localhost', '127.0.0.1', ''].includes(window.location.hostname)) {
-      document.body.insertAdjacentHTML('afterbegin', `
-            <div style="background:#ff4444;color:white;padding:12px;text-align:center;font-weight:bold;z-index:99999;position:fixed;top:0;width:100%;box-shadow:0 4px 15px rgba(0,0,0,0.3)">
-                ⚠️ WARNING: Lumina is designed for local use only. 
-                Do not expose this to the public internet — your system is at risk.
-            </div>
-        `);
-    }
-
-    // 7 — CSRF protection
-    let csrfToken = null;
-
-    async function refreshCsrf() {
-      try {
-        const res = await nativeFetch("/csrf_token");
-        const data = await res.json();
-        csrfToken = data.token;
-      } catch (err) {
-        console.error("Failed to fetch CSRF token", err);
-      }
-    }
-    refreshCsrf();
-
-    // Helper to wrap fetch with CSRF token
-    async function secureFetch(url, options = {}) {
-      if (options.method && options.method.toUpperCase() === 'POST') {
-        if (!csrfToken) await refreshCsrf();
-        options.headers = {
-          ...options.headers,
-          "X-CSRF-Token": csrfToken
-        };
-      }
-      const res = await nativeFetch(url, options);
-      // If CSRF failed (e.g. token expired/one-time use), refresh for next time
-      if (options.method && options.method.toUpperCase() === 'POST') {
-        refreshCsrf();
-      }
-      return res;
-    }
 
     // --- UPDATE CHECKER ---
     async function checkUpdate() {

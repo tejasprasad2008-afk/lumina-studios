@@ -6,7 +6,7 @@ from datetime import datetime
 import torch
 import numpy as np
 import soundfile as sf
-from pydub import AudioSegment
+from pydub import AudioSegment, effects
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks, UploadFile, File
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -329,28 +329,37 @@ def get_pipeline(voice_name: str) -> EnhancedKPipeline:
         pipelines[lang_code] = EnhancedKPipeline(lang_code=lang_code, model=True)
     return pipelines[lang_code]
 
-def validate_audio_file(path: Path) -> bool:
-    try:
-        p_str = str(path)
-        seg = AudioSegment.from_file(p_str)
-        # normalize to consistent format
-        seg = seg.set_frame_rate(24000).set_channels(1).set_sample_width(2)
-        seg.export(p_str, format="wav")
-        return True
-    except Exception as e:
-        logger.warning("Invalid audio file %s: %s — skipping", path, e)
-        return False
 
-def compile_chunks(chunk_paths: List[Path], output_path: Path, crossfade_ms=8) -> Optional[Path]:
+def compile_chunks(chunk_paths: List[Path], output_path: Path, crossfade_ms=10) -> Optional[Path]:
     try:
-        valid_paths = [p for p in chunk_paths if validate_audio_file(p)]
+        def smooth_chunk(segment: AudioSegment) -> AudioSegment:
+            # Normalize and fade in/out to eliminate DC offset clicks
+            if segment.max_dBFS > -inf_db: 
+                segment = effects.normalize(segment)
+            return segment.fade_in(8).fade_out(8)
+        
+        inf_db = float('inf')
+        valid_paths = [p for p in chunk_paths if p.exists()]
         if not valid_paths:
             return None
         
         combined = AudioSegment.from_file(str(valid_paths[0]))
+        # Basic normalize to consistent format
+        combined = combined.set_frame_rate(24000).set_channels(1).set_sample_width(2)
+        combined = smooth_chunk(combined)
+        
         for path in valid_paths[1:]:
             next_chunk = AudioSegment.from_file(str(path))
-            combined = combined.append(next_chunk, crossfade=crossfade_ms)
+            next_chunk = next_chunk.set_frame_rate(24000).set_channels(1).set_sample_width(2)
+            next_chunk = smooth_chunk(next_chunk)
+            
+            # Use 20ms for paragraph breaks (silence/gap/pause), 10ms for regular
+            current_fade = crossfade_ms
+            p_str = str(path).lower()
+            if "silence" in p_str or "gap" in p_str or "pause" in p_str:
+                current_fade = 20
+            
+            combined = combined.append(next_chunk, crossfade=current_fade)
         
         combined.export(str(output_path), format="wav")
         return output_path
@@ -1110,7 +1119,7 @@ async def generate_podcast_logic(req: PodcastRequest):
         yield f"data: {json.dumps({'status': 'Compiling podcast...'})}\n\n"
         
         master_wav = DEFAULT_OUTPUT_DIR / f"podcast_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
-        compile_chunks(all_clip_paths, master_wav, crossfade_ms=5)
+        compile_chunks(all_clip_paths, master_wav)
         
         if not master_wav.exists() or master_wav.stat().st_size == 0:
             yield f"data: {json.dumps({'error': 'Compilation failed'})}\n\n"
